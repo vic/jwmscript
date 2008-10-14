@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <title>BeanShell scripting example</title>
+    <script type="text/javascript" src="applet.js"></script>
+    <script>
+      JWMScript("text/java", "text/beanshell", function(scripting) {
+        // FIXME: Firefox fails if given the maven jar because the applet is loaded from a different server.
+        //scripting.addClassPath("http://repo1.maven.org/maven2/org/beanshell/bsh/2.0b4/bsh-2.0b4.jar");
+        scripting.addClassPath("file:/home/vic/tmp/bsh-2.0b4.jar");
+        var interpreter = scripting.wrapClass("bsh.Interpreter").newInstance();
+        interpreter.set("jwmscript", scripting.getHandle());
+        return function(script) { interpreter.eval(script.innerHTML); };
+      });
+    </script>
+    <script type="text/beanshell">
+      StringBuffer hello = new StringBuffer("Hello");
+      hello.append(" from: ").append(jwmscript.getDocument().getMember("title"));
+      jwmscript.alert( hello );
+    </script>
+  </head>
+  <body>
+  </body>
+</html>

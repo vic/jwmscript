@@ -1,0 +1,104 @@
+<html>
+  <head>
+    <title>JRuby scripting example</title>
+    <script type="text/javascript" src="applet.js"></script>
+    <script>
+      JWMScript("text/ruby", function(scripting) {
+        // FIXME: Firefox fails if given the maven jar because the applet is loaded from a different server.
+        // scripting.addClassPath("http://repo1.maven.org/maven2/org/jruby/jruby-complete/1.1.4/jruby-complete-1.1.4.jar")
+        scripting.addClassPath("file:/opt/jruby-1.1.4/lib/jruby-complete-1.1.4.jar");
+        var cfg = scripting.wrapClass("org.jruby.RubyInstanceConfig").newInstance();
+        cfg.setLoader(scripting.javaObject.getClassLoader());
+        var interpreter = scripting.wrapClass("org.jruby.Ruby").method("newInstance")(cfg);
+        var jwmscript = scripting.getHandle();
+        var jwmscript_rb = scripting.wrapClass("org.jruby.javasupport.JavaUtil").method("convertJavaToUsableRubyObject")(interpreter, jwmscript);
+        var jwmscript_accessor = scripting.wrapClass("org.jruby.internal.runtime.ValueAccessor").newInstance(jwmscript_rb);
+        interpreter.getGlobalVariables().defineReadonly("$jwmscript", jwmscript_accessor);
+        return function(script) { interpreter.evalScriptlet(script.innerHTML); };
+      });
+    </script>
+    <script type="text/ruby">
+      $jwmscript.alert "Hello from #{JRuby.runtime}: #{$jwmscript.document.getMember('title')}"
+
+      # A lot more rubish example:
+      # TODO: this should be loaded from an URI
+      $: << "/home/vic/hk/jwmscript/ruby/lib"
+      require "jwmscript"
+
+      class Hello
+
+        def initialize
+          @times = 0
+          @pages = [
+              "http://www.google.com",
+              "http://www.slashdot.org",
+              "http://www.ruby-lang.org",
+            ]
+        end
+
+        def clicked!(event)
+          next_page = @pages[@times]
+          @times += 1
+          JWMScript.window.alert "Hello, I'm #{self.inspect} (#{event})"
+          el.innerHTML = "Click Me Again! (you've done it #{@times} times)"
+          if next_page
+            require 'net/http'
+            res = Net::HTTP.get_response(URI.parse(next_page))
+            while res.kind_of?(Net::HTTPRedirection) 
+              res = Net::HTTP.get_response(URI.parse(res['location']))
+            end
+            page = JWMScript.document.getElementById("page")
+            page.innerHTML = res.body
+          end
+        end
+        
+        def el
+          JWMScript.document.getElementById(object_id.to_s)
+        end
+
+        def insert(id)
+          hello = JWMScript.document.createElement "div"
+          hello.setAttribute "id", object_id.to_s
+          hello.innerHTML = "Click Me Now!"
+          here = JWMScript.document.getElementById(id)
+          here.appendChild(hello)
+          hello.addEventListener "click", method(:clicked!), false
+        end
+      end
+
+      Hello.new.insert "here"
+    </script>
+  </head>
+  <body>
+    <div>
+
+      <p>
+        JWMScript is a very tiny applet that allows you to script your browser with any JVM language.</br>
+        Now you can manipulate your browser DOM or use any JavaScript library from the confort of your 
+        favourite JVM language (that includes Java).</br>
+        And you get access to any Java library out there, e.g. to access webservices from the client side.
+      </p>
+
+      <p>
+        This example shows how to use a jruby-complete jar to script pages with JRuby. Open this document
+        source to see how it's done.
+      </p>
+
+      <p>
+        Using an already installed JRuby allows you to use any ruby gem out there.</br>
+        This example uses basic DOM manipulation on the window and document objects.
+      </p>
+
+      <div id="here"></div>
+
+      <div id="page"></div>
+      
+      <hr />
+      
+      <p>
+        <a href="http://github.com/vic/jwmscript">JWM Script</a>
+      </p>
+        
+    </div>
+  </body>
+</html>

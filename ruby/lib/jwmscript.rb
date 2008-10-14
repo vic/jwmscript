@@ -1,0 +1,1 @@
+require 'jwmscript/jshandle'
