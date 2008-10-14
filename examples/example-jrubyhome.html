@@ -5,7 +5,7 @@
     <script>
       JWMScript("text/ruby", function(scripting) {
         // FIXME: Firefox fails if given the maven jar because the applet is loaded from a different server.
-        // scripting.addClassPath("http://repo1.maven.org/maven2/org/jruby/jruby-complete/1.1.4/jruby-complete-1.1.4.jar")
+        //scripting.addClassPath("http://repo1.maven.org/maven2/org/jruby/jruby-complete/1.1.4/jruby-complete-1.1.4.jar")
         scripting.addClassPath("file:/opt/jruby-1.1.4/lib/jruby-complete-1.1.4.jar");
         var cfg = scripting.wrapClass("org.jruby.RubyInstanceConfig").newInstance();
         cfg.setLoader(scripting.javaObject.getClassLoader());
@@ -29,7 +29,11 @@
 
         def initialize
           @times = 0
-          @pages = [
+        end
+
+        def pages
+            [
+              "http://github.com/vic/jwmscript",
               "http://www.google.com",
               "http://www.slashdot.org",
               "http://www.ruby-lang.org",
@@ -37,18 +41,15 @@
         end
 
         def clicked!(event)
-          next_page = @pages[@times]
+          next_page = pages[@times]
           @times += 1
           JWMScript.window.alert "Hello, I'm #{self.inspect} (#{event})"
           el.innerHTML = "Click Me Again! (you've done it #{@times} times)"
+          page = JWMScript.document.getElementById("page")
           if next_page
-            require 'net/http'
-            res = Net::HTTP.get_response(URI.parse(next_page))
-            while res.kind_of?(Net::HTTPRedirection) 
-              res = Net::HTTP.get_response(URI.parse(res['location']))
-            end
-            page = JWMScript.document.getElementById("page")
-            page.innerHTML = res.body
+            page.innerHTML = "<a href=#{next_page.inspect}>#{next_page}</a>"
+          else
+            page.innerHTML = ""
           end
         end
         
