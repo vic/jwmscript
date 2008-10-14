@@ -22,9 +22,8 @@ JWMScript = function() {
 
         applet : function() {
             var str = "";
-            str += ' <APPLET ID= "'+this.id+'" ';
+            str += ' <APPLET ';
             str += ' CODEBASE="'+this.archive+'" ';
-            str += ' ARCHIVE="'+this.archive+'" ';
             str += ' CODE="com.jwmsolutions.jwmscript.JWMScriptApplet" ';
             str += ' ALT="JWMScript Applet" ';
             str += ' NAME="'+this.id+'" ';
