@@ -121,6 +121,7 @@
             this.javaObject = javaObject;
             var instances = window.JWMScript.instances || {};
             var id = this.javaObject.getParameter("object_id");
+            alert("INITING "+id);
             instances[id].initialize(this);
         }),
 
