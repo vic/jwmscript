@@ -4,6 +4,8 @@ import java.applet.Applet;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
 import java.net.URL;
 
 import netscape.javascript.JSObject;
@@ -24,6 +26,15 @@ public class JWMScriptApplet extends Applet implements JSHolder {
     }
 
     private String readURLString(URL url) throws Exception {
+        BufferedReader in = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream()));
+        StringBuffer buff = new StringBuffer();
+        String inputLine;
+        while ((inputLine = in.readLine()) != null) { buff.append(inputLine).append("\n"); }
+        in.close();
+        return buff.toString();
+    }
+
+    private String readURLStringNo(URL url) throws Exception {
         StringBuffer buff = new StringBuffer();
         InputStream is = url.openStream();
         byte[] bytes = new byte[is.available()];

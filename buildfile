@@ -45,6 +45,8 @@ define 'jwmscript' do
     
 end
 
+task('default' => ['jwmscript:package', 'jwmscript:sign'])
+
 __END__
 $:.unshift File.expand_path('~/hk/buildr/lib')
 $:.unshift File.expand_path('~/hk/buildr/addon')
