@@ -35,8 +35,8 @@ public class JWMScriptApplet extends Applet implements JSHolder {
     }
 
     public void init() {
+        JSObject window = JSObject.getWindow(this);
         try {
-            JSObject window = JSObject.getWindow(this);
             this.handle = new JSHandle(window, getAppletContext());
             URLSetPolicy policy = new URLSetPolicy();
             java.security.Policy.setPolicy(policy);
@@ -47,21 +47,8 @@ public class JWMScriptApplet extends Applet implements JSHolder {
             this.handle = new JSHandle(jsObject, getAppletContext());
             jsObject.call("initialize", new Object[] { this });
         } catch (Throwable t) {
-            alertException(t);
+            window.call("alert", new Object[] { getBacktrace(t) } );
         }
-    }
-
-    public void alert(Object message) {
-        String str = String.valueOf(message);
-        str = str.replaceAll("[\"\']", "\\\\$0").replaceAll("[\n\f]", "\\\\n");
-        handle.eval("alert(\""+str+"\");");
-    }
-
-    private void alertException(Throwable e) {
-        StringWriter writer = new StringWriter();
-        PrintWriter print = new PrintWriter(writer, true);
-        e.printStackTrace(print);
-        alert(writer.toString());
     }
 
     public String getBacktrace(Object o) {

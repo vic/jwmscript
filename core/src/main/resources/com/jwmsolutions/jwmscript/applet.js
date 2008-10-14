@@ -22,15 +22,14 @@ JWMScript = function() {
 
         applet : function() {
             var str = "";
-            str += ' <APPLET ';
-            str += ' ARCHIVE="'+this.archive+'" ';
-            str += ' CODE="com.jwmsolutions.jwmscript.JWMScriptApplet" ';
-            str += ' ALT="JWMScript Applet" ';
-            str += ' NAME="'+this.id+'" ';
-            str += ' WIDTH="0" HEIGHT="0" ';
+            str += ' <applet  ';
+            if (this.codebase) { str += ' codebase="'+this.codebase+'" '; }
+            str += ' archive="'+this.archive+'" ';
+            str += ' code="com.jwmsolutions.jwmscript.JWMScriptApplet" ';
+            str += ' width="0" height="0" mayscript="mayscript" scriptable="true" ';
             str += ' > ';
-            str += '     <PARAM NAME="object_id"  VALUE="'+this.id+'"> ';
-            str += ' </APPLET> ';
+            str += '     <param name="object_id"  value="'+this.id+'"> ';
+            str += ' </applet> ';
             return str;
         },
 
@@ -59,6 +58,8 @@ JWMScript = function() {
                 str += (' <param name="scriptable" value="true" />');
             }
 
+            str += (' <param name="object_id" value="'+this.id+'" />');
+
             if (nav.match(/Netscape/)) {
                 str += ('</embed>');
             } else {
@@ -72,4 +73,7 @@ JWMScript = function() {
 };
 
 JWMScript = JWMScript();
-
+JWMScript.relative = function(path, to) {
+    to = to || document.location.toString();
+    return to.toString().replace(/\/[^\/]*$/, "/")+path;
+};

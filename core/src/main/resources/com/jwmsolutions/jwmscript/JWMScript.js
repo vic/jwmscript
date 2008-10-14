@@ -19,6 +19,11 @@
                 });
         },
 
+        relative : function(path, to) {
+            to = to || document.location.toString();
+            return to.toString().replace(/\/[^\/]*$/, "/")+path;
+        },
+        
         copy_ary : function(obj) {
             var ary = new Array();
             for (var i = 0; i < obj.length; i++) {
@@ -100,7 +105,11 @@
           var urlArray = java.lang.reflect.Array.newInstance(java.net.URL, a.length);
           for (var i = 0; i < a.length; i++) {
               var url = a[i];
-              java.lang.reflect.Array.set(urlArray, i, (typeof url == "string") ? new java.net.URL(url) : url);
+              if (typeof(url) == "string") {
+                  if (!url.match(/^\w+:/)) { url = util.relative(url); }
+                  url = new java.net.URL(url);
+              }
+              java.lang.reflect.Array.set(urlArray, i, url);
           }
           return urlArray;
         },
@@ -121,7 +130,6 @@
             this.javaObject = javaObject;
             var instances = window.JWMScript.instances || {};
             var id = this.javaObject.getParameter("object_id");
-            alert("INITING "+id);
             instances[id].initialize(this);
         }),
 
