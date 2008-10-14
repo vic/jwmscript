@@ -119,7 +119,9 @@
     extend(JWMScript.prototype, {
         initialize : util.exception_handle(function(javaObject) {
             this.javaObject = javaObject;
-            window.JWMScript.initialize(this);
+            var instances = window.JWMScript.instances || {};
+            var id = this.javaObject.getParameter("object_id");
+            instances[id].initialize(this);
         }),
 
         register : util.exception_handle(function(types, callback) {
