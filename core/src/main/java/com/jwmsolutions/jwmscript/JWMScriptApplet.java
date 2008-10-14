@@ -11,11 +11,11 @@ import java.net.URL;
 import netscape.javascript.JSObject;
 
 public class JWMScriptApplet extends Applet implements JSHolder {
-
-	private static final long serialVersionUID = -3544417053244651886L;
-	private static final String JS_RESOURCE = "com/jwmsolutions/jwmscript/JWMScript.js";
+    
+    private static final long serialVersionUID = -3544417053244651886L;
+    private static final String JS_RESOURCE = "com/jwmsolutions/jwmscript/JWMScript.js";
     private JSHandle handle;
-
+    
     public JSHandle getJSHandle() {
         return handle;
     }
@@ -31,17 +31,6 @@ public class JWMScriptApplet extends Applet implements JSHolder {
         String inputLine;
         while ((inputLine = in.readLine()) != null) { buff.append(inputLine).append("\n"); }
         in.close();
-        return buff.toString();
-    }
-
-    private String readURLStringNo(URL url) throws Exception {
-        StringBuffer buff = new StringBuffer();
-        InputStream is = url.openStream();
-        byte[] bytes = new byte[is.available()];
-        int offset = 0;
-        for (int read = -1; 0 < (read = is.read(bytes, offset, bytes.length)); offset += read) {
-            buff.append(new String(bytes));
-        }
         return buff.toString();
     }
 
