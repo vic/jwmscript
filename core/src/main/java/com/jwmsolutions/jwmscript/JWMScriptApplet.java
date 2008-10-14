@@ -1,20 +1,17 @@
 package com.jwmsolutions.jwmscript;
 
-import netscape.javascript.JSObject;
-import netscape.javascript.JSException;
 import java.applet.Applet;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.InputStream;
-import javax.script.Invocable;
+
+import netscape.javascript.JSObject;
 
 public class JWMScriptApplet extends Applet implements JSHolder {
 
-    private static final String JS_RESOURCE = "com/jwmsolutions/jwmscript/JWMScript.js";
+	private static final long serialVersionUID = -3544417053244651886L;
+	private static final String JS_RESOURCE = "com/jwmsolutions/jwmscript/JWMScript.js";
     private JSHandle handle;
 
     public JSHandle getJSHandle() {

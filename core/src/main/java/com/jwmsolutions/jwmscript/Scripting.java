@@ -17,10 +17,6 @@ public class Scripting implements JSHolder {
         this.classLoader = new URLClassLoader();
     }
 
-    public void addClassPath(URL ... urls) throws Exception {
-        for (URL url : urls) { classLoader.addURL(url); }
-    }
-
     public ClassLoader getClassLoader() {
         return classLoader;
     }

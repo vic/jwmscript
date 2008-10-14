@@ -70,14 +70,14 @@
             var wrapper = this.root.javaObject.wrapClass(name, classLoader || null);
             return {
                 newInstance : function() {
-                    return wrapper.callConstructor(util.toJavaArray(arguments));
+                    return wrapper.newInstance(util.toJavaArray(arguments));
                 },
                 field : function(fieldName) {
-                    return wrapper.getField(fieldName);
+                    return wrapper.getStaticField(fieldName);
                 },
                 method : function(methodName) {
                     return function() {
-                        return wrapper.callMethod(methodName, util.toJavaArray(arguments));
+                        return wrapper.callStaticMethod(methodName, util.toJavaArray(arguments));
                     };
                 },
                 on : function(object) { 
@@ -87,7 +87,7 @@
                         },
                         method : function(methodName) {
                             return function() {
-                                return wrapper.callMethod(object, methodName, util.toJavaArray(arguments));
+                                return wrapper.callInstanceMethod(object, methodName, util.toJavaArray(arguments));
                             };
                         }
                     };
@@ -122,10 +122,7 @@
             window.JWMScript.initialize(this);
         }),
 
-        register : util.exception_handle(function() {
-            var args = util.copy_ary(arguments);
-            var callback = args.pop();
-            var types = args;
+        register : util.exception_handle(function(types, callback) {
             var scripting = new JWMScript.Scripting();
             var ctx = this.javaObject.getAppletContext();
             var handle = util.wrapClass("com.jwmsolutions.jwmscript.JSHandle").newInstance(scripting, ctx);
@@ -153,7 +150,7 @@
         addClassPath : function() {
             urls = util.toURLArray(arguments);
             java.security.Policy.getPolicy().addURL(urls);
-            this.javaObject.addClassPath(urls);
+            this.javaObject.getClassLoader().addURL(urls);
         },
         wrapClass : function(name) {
             return util.wrapClass(name, this.javaObject.getClassLoader());

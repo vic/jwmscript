@@ -1,6 +1,12 @@
 package com.jwmsolutions.jwmscript;
 
+import java.io.IOException;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.Proxy;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
 
 public class URLClassLoader extends java.net.URLClassLoader {
 
@@ -12,11 +18,10 @@ public class URLClassLoader extends java.net.URLClassLoader {
         super(new java.net.URL[0], cl);
     }
 
-    public void addURL(String url) throws MalformedURLException {
-        super.addURL(new java.net.URL(url));
+    public void addURL(java.net.URL ... urls) {
+        for (URL url : urls) { 
+            super.addURL(url);
+        }
     }
-    
-    public void addURL(java.net.URL url) {
-        super.addURL(url);
-    }
+
 }
