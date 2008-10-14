@@ -1,7 +1,13 @@
 #!/usr/bin/env ruby
 exit !!eval(DATA.read, binding) if $0 == __FILE__
 
+repositories.remote << "http://www.ibiblio.org/maven2/"
+repositories.remote << "http://repo1.maven.org/maven2/"
+
 define 'jwmscript' do
+
+  bsh = artifact("org.beanshell:bsh:jar:2.0b4")
+  jruby_complete = artifact("org.jruby:jruby-complete:jar:1.1.4")
 
   project.version = '0.0.1'
 
@@ -15,7 +21,8 @@ define 'jwmscript' do
   end
 
   task('sign' => [project('ruby').package(:jar),
-                  project('core').package(:jar)]) do |task|
+                  project('core').package(:jar),
+                  bsh, jruby_complete ]) do |task|
     mkpath _('examples/signed')
     task.prerequisites.each do |jar|
       sh File.expand_path('bin/jarsigner', ENV['JAVA_HOME']), 
@@ -26,10 +33,9 @@ define 'jwmscript' do
   end
 
 
-  task('ff', [:example] => ['package', project('core').task('sign')]) do |task, args|
+  task('ff', [:example] => ['package', 'sign']) do |task, args|
     example = args[:example] || 'bsh'
-    cp _('core/src/main/resources/com/jwmsolutions/jwmscript/applet.js'), _('examples')
-    sh 'firefox', '-no-remote', '-P', 'devel', _("examples/example-#{example}.html")
+    sh 'firefox', '-no-remote', '-P', 'devel', _("examples/#{example}.html")
   end
 
   task('sandbox', :file) do |task, args|
