@@ -17,19 +17,20 @@ JWMScript = function() {
     extend(obj.prototype, {
 
         initialize : function(jwmscript) {
+            alert("Applet INIT");
             return jwmscript.register.apply(jwmscript, [this.types, this.setup]);
         },
 
         applet : function() {
             var str = "";
-            str += ' <applet  ';
+            str += '<applet  ';
             if (this.codebase) { str += ' codebase="'+this.codebase+'" '; }
             str += ' archive="'+this.archive+'" ';
             str += ' code="com.jwmsolutions.jwmscript.JWMScriptApplet" ';
             str += ' width="0" height="0" mayscript="mayscript" scriptable="true" ';
             str += ' > ';
             str += '     <param name="object_id"  value="'+this.id+'"> ';
-            str += ' </applet> ';
+            str += '</applet> ';
             return str;
         },
 

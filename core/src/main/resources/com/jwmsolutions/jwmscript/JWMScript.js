@@ -127,6 +127,7 @@
     var JWMScript = function() { util.root = this; };
     extend(JWMScript.prototype, {
         initialize : util.exception_handle(function(javaObject) {
+            alert("JS INIT");
             this.javaObject = javaObject;
             alert("initing permissions");
             javaObject.initPermissions(window);
@@ -134,7 +135,7 @@
             var instances = window.JWMScript.instances || {};
             var id = this.javaObject.getParameter("object_id");
             alert("initing javascript object "+id);
-            instances[id].initialize(this);
+            // instances[id].initialize(this);
         }),
 
         register : util.exception_handle(function(types, callback) {
