@@ -111,19 +111,11 @@
         },
 
         toURLArray : function(a) {
-            alert("HAndle for array "+a.length);
-            var handle = this.handle(a);
-            alert("handle: "+handle);
-            try {
-            return this.javaObject.toURLArray(handle);
-            }catch(e) {
-                alert(e);
-            }
-
+            return this.javaObject.toURLAry(this.handle(a));
         },
 
         toJavaArray : function(a, type) {
-            return this.javaObject.toJavaArray(this.handle(a), type || null);
+            return this.javaObject.toJavaAry(this.handle(a), type || null);
         },
 
         setJavaObject : function(javaObject) {

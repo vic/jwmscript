@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import javax.script.Invocable;
 import netscape.javascript.JSObject;
+import java.lang.reflect.Array;
 
 public class Util implements JSHolder {
     
@@ -62,10 +63,10 @@ public class Util implements JSHolder {
         return (JSHandle) handle.call("createCallback", new Object[] { ivk, object, name });
     }
 
-    public URL[] toURLArray(JSHandle jsAry) throws java.net.MalformedURLException {
+    public Object toURLAry(JSHandle jsAry) throws java.net.MalformedURLException {
         try {
         int length = ((Number) jsAry.getMember("length")).intValue();
-        URL[] ary = new URL[length];
+        Object ary = Array.newInstance(URL.class, length);     
         for (int i = 0; i < length; i++) {
             Object obj = jsAry.getSlot(i);
             if (obj == null) { continue; }
@@ -75,7 +76,7 @@ public class Util implements JSHolder {
                 spec = location.replaceFirst("/[^/]*$", "/"+spec);
             }
             handle.alert("Doing "+i+" "+spec);
-            ary[i] = new URL(spec);
+            Array.set(ary, i, spec);
         }
         handle.alert("Done with url ary "+length);
         return ary;
@@ -85,17 +86,16 @@ public class Util implements JSHolder {
         }
     }
 
-    public Object[] toJavaArray(JSHandle jsAry, Class javaClass) {
+    public Object toJavaAry(JSHandle jsAry, Class javaClass) {
         int length = ((Number) jsAry.getMember("length")).intValue();
         if (javaClass == null) { javaClass = Object.class; }
-        handle.alert(" TO JAVA "+javaClass+"["+length+"] "+jsAry+" ");
-        Object[] ary = new Object[length];
+        Object ary = Array.newInstance(URL.class, length);     
         for (int i = 0; i < length; i ++) {
             Object obj = jsAry.getSlot(i);
             if (JSObject.class.isAssignableFrom(javaClass) && obj instanceof JSHandle) {
                 obj = ((JSHandle) obj).getJSObject();
             }
-            ary[i] = obj;
+            Array.set(ary, i, obj);
         }
         return ary;
     }
