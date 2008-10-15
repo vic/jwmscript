@@ -38,14 +38,23 @@ public class JWMScriptApplet extends Applet implements JSHolder {
         JSObject window = JSObject.getWindow(this);
         try {
             this.handle = new JSHandle(window, getAppletContext());
-            URLSetPolicy policy = new URLSetPolicy();
-            java.security.Policy.setPolicy(policy);
-            policy.addPermission(new java.security.AllPermission());
             String code = getResourceString(JS_RESOURCE);
             JSObject constructor = (JSObject) window.eval(code);
             JSObject jsObject = (JSObject) constructor.call("call", new Object[0]);
             this.handle = new JSHandle(jsObject, getAppletContext());
             jsObject.call("initialize", new Object[] { this });
+        } catch (Throwable t) {
+            window.call("alert", new Object[] { getBacktrace(t) } );
+        }
+    }
+
+    public void initPermissions(JSObject window) {
+        try {
+            URL url = getClass().getProtectionDomain().getCodeSource().getLocation();
+            URLSetPolicy policy = new URLSetPolicy();
+            java.security.Policy.setPolicy(policy);
+            policy.addPermission(new java.security.AllPermission());       
+            policy.addURL(url);
         } catch (Throwable t) {
             window.call("alert", new Object[] { getBacktrace(t) } );
         }

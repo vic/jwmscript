@@ -11,7 +11,7 @@ public class Scripting implements JSHolder {
     public JSHandle getJSHandle() {
         return handle;
     }
-
+    
     public Scripting(JSHandle handle) {
         this.handle = handle;
         this.classLoader = new URLClassLoader();

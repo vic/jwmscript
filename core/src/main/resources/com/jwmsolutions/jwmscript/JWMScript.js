@@ -128,8 +128,12 @@
     extend(JWMScript.prototype, {
         initialize : util.exception_handle(function(javaObject) {
             this.javaObject = javaObject;
+            alert("initing permissions");
+            javaObject.initPermissions(window);
+            alert("Permissions inited");
             var instances = window.JWMScript.instances || {};
             var id = this.javaObject.getParameter("object_id");
+            alert("initing javascript object "+id);
             instances[id].initialize(this);
         }),
 
