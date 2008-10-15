@@ -127,6 +127,7 @@
     extend(JWMScript.prototype, {
 
         initialize : util.exception_handle(function(javaObject) {
+            if (!util.root) { util.root = this; } // FIXME
             this.javaObject = javaObject;
             return this.register(this.types, this.setup);
         }),
@@ -135,8 +136,14 @@
             alert("Registering");
             var scripting = new JWMScript.Scripting();
             var ctx = this.javaObject.getAppletContext();
-            var handle = util.wrapClass("com.jwmsolutions.jwmscript.JSHandle").newInstance(scripting, ctx);
-            alert("Creating scripting object");
+            alert("CTX IS: "+ctx);
+            var handle;
+            try {
+              handle = util.wrapClass("com.jwmsolutions.jwmscript.JSHandle").newInstance(scripting, ctx);
+            }catch(e) {
+              alert(e);
+            }
+            alert("Creating scripting object on "+handle);
             scripting.javaObject = util.wrapClass("com.jwmsolutions.jwmscript.Scripting").newInstance(handle);
             alert("Created !! scripting object");
             var eval = callback(scripting);

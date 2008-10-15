@@ -5,7 +5,7 @@ import javax.script.Invocable;
 
 public class Scripting implements JSHolder {
 
-    private URLClassLoader classLoader;
+    private ClassLoader classLoader;
     private JSHandle handle;
     
     public JSHandle getJSHandle() {
@@ -13,8 +13,12 @@ public class Scripting implements JSHolder {
     }
     
     public Scripting(JSHandle handle) {
+        this(handle, new URLClassLoader());
+    }
+
+    public Scripting(JSHandle handle, ClassLoader cl) {
         this.handle = handle;
-        this.classLoader = new URLClassLoader();
+        this.classLoader = cl;
     }
 
     public ClassLoader getClassLoader() {

@@ -38,6 +38,9 @@ public class JWMScriptApplet extends Applet implements JSHolder {
         handle = new JSHandle(JSObject.getWindow(this), getAppletContext());
         try {
             initPermissions();
+            handle.alert("Creating classLoader");
+            URLClassLoader classLoader = new URLClassLoader();
+            handle.alert("classLoader: "+classLoader);
             JSHandle jwmscript = (JSHandle) handle.eval(getResourceString(JS_RESOURCE));
             handle = (JSHandle) jwmscript.call("getInstance", getParameter("object_id"));
             handle.call("initialize", this);
@@ -52,7 +55,6 @@ public class JWMScriptApplet extends Applet implements JSHolder {
         java.security.Policy.setPolicy(policy);
         policy.addPermission(new java.security.AllPermission());       
         policy.addURL(url);
-        handle.alert("Inited Permissions for "+url);
     }
 
     public String getBacktrace(Object o) {
