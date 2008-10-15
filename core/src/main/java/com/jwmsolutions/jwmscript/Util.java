@@ -63,10 +63,9 @@ public class Util implements JSHolder {
         return (JSHandle) handle.call("createCallback", new Object[] { ivk, object, name });
     }
 
-    public Object toURLAry(JSHandle jsAry) throws java.net.MalformedURLException {
-        try {
+    public URL[] toURLAry(JSHandle jsAry) throws java.net.MalformedURLException {
         int length = ((Number) jsAry.getMember("length")).intValue();
-        Object ary = Array.newInstance(URL.class, length);     
+        URL[] ary = new URL[length];
         for (int i = 0; i < length; i++) {
             Object obj = jsAry.getSlot(i);
             if (obj == null) { continue; }
@@ -75,21 +74,23 @@ public class Util implements JSHolder {
                 String location = (String) handle.eval("document.location.toString()");
                 spec = location.replaceFirst("/[^/]*$", "/"+spec);
             }
-            handle.alert("Doing "+i+" "+spec);
-            Array.set(ary, i, new URL(spec));
+            ary[i] = new URL(spec);
         }
-        handle.alert("Done with url ary "+length);
         return ary;
-        }catch(Throwable e) {
-            handle.alert(getBacktrace(e));
-            throw new RuntimeException(e);
-        }
     }
 
-    public Object toJavaAry(JSHandle jsAry, Class javaClass) {
+    public Object[] toObjectAry(JSHandle jsAry) {
+        return toJavaAry(jsAry, Object.class);
+    }
+
+    public JSHandle[] toHandleAry(JSHandle jsAry) {
+        return (JSHandle[]) toJavaAry(jsAry, JSHandle.class);
+    }
+
+    public Object[] toJavaAry(JSHandle jsAry, Class javaClass) {
         int length = ((Number) jsAry.getMember("length")).intValue();
         if (javaClass == null) { javaClass = Object.class; }
-        Object ary = Array.newInstance(URL.class, length);     
+        Object ary = Array.newInstance(javaClass, length);
         for (int i = 0; i < length; i ++) {
             Object obj = jsAry.getSlot(i);
             if (JSObject.class.isAssignableFrom(javaClass) && obj instanceof JSHandle) {
@@ -97,7 +98,7 @@ public class Util implements JSHolder {
             }
             Array.set(ary, i, obj);
         }
-        return ary;
+        return (Object[]) ary;
     }
 
     public JSHandle newHandle(JSObject jsObject) {

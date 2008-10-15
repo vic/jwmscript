@@ -9,6 +9,7 @@ public class Applet extends java.applet.Applet {
     private static final String JS_RESOURCE = "com/jwmsolutions/jwmscript/JWMScript.js";
 
     private Util util;
+    private URLSetPolicy policy;
     
     public void init() {
         JSHandle handle = new JSHandle(JSObject.getWindow(this), getAppletContext());
@@ -29,14 +30,18 @@ public class Applet extends java.applet.Applet {
     public Scripting newScripting(String id) {
         JSHandle instance = (JSHandle) util.getJSHandle().call("getInstance", id);
         ClassLoader cl = getClass().getClassLoader();
-        Scripting scripting = new Scripting(instance, new URLClassLoader(cl));
+        Scripting scripting = new Scripting(instance, new URLClassLoader(cl), this);
         instance.call("initialize", scripting);
         return scripting;
     }
 
+    public URLSetPolicy getPolicy() {
+        return policy;
+    }
+
     private void initPermissions() {
         URL url = getClass().getProtectionDomain().getCodeSource().getLocation();
-        URLSetPolicy policy = new URLSetPolicy();
+        policy = new URLSetPolicy();
         java.security.Policy.setPolicy(policy);
         policy.addPermission(new java.security.AllPermission());
         policy.addURL(url, getCodeBase(), getDocumentBase());

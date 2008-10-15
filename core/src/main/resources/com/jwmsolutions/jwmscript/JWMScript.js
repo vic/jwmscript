@@ -111,28 +111,11 @@
         },
 
         toURLArray : function(a) {
-          var urlArray = java.lang.reflect.Array.newInstance(java.net.URL, a.length);
-          for (var i = 0; i < a.length; i++) {
-              var url = a[i];
-              if (typeof url == "string") {
-                  if (!url.match(/^\w+:/)){
-                      url = document.location.toString().replace(/\/[^/]*$/, "/"+url);
-                  }
-                  alert(url);
-                  url = new java.net.URL(url);
-              }
-              java.lang.reflect.Array.set(urlArray, i, url);
-          }
-          return urlArray;
+            return this.javaObject.toURLAry(this.handle(a));
         },
 
         toJavaArray : function(a, type) {
-          type = type || java.lang.Object;
-          var array = java.lang.reflect.Array.newInstance(type, a.length);
-          for (var i = 0; i < a.length; i++) {
-              java.lang.reflect.Array.set(array, i, a[i]);
-          }
-          return array;
+            return this.javaObject.toJavaAry(this.handle(a), type || null);
         },
 
         setJavaObject : function(javaObject) {
@@ -176,15 +159,8 @@
     JWMScript.Scripting = function(obj) { extend(this, obj); };
     extend(JWMScript.Scripting.prototype, {
         addClassPath : util.exception_handle(function() {
-            alert("Adding to Classpath: "+arguments);
             var urls = util.toURLArray(arguments);
-            alert("Got urls "+urls);
-            try {
             this.javaObject.addClassPath(urls);
-            }catch(e) {
-                alert(util.getBacktrace(e));
-            }
-
         }),
         wrapClass : function(name) {
             return util.wrapClass(name, this.javaObject.getClassLoader());
