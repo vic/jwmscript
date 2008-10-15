@@ -23,7 +23,7 @@
             to = to || document.location.toString();
             return to.toString().replace(/\/[^\/]*$/, "/")+path;
         },
-        
+
         copy_ary : function(obj) {
             var ary = new Array();
             for (var i = 0; i < obj.length; i++) {
@@ -85,8 +85,8 @@
                         return wrapper.callStaticMethod(methodName, util.toJavaArray(arguments));
                     };
                 },
-                on : function(object) { 
-                    return { 
+                on : function(object) {
+                    return {
                         field : function(fieldName) {
                             return wrapper.getInstanceField(object, fieldName);
                         },
@@ -124,19 +124,16 @@
         }
     };
 
-    var JWMScript = function() { util.root = this; };
     extend(JWMScript.prototype, {
-        initialize : util.exception_handle(function(javaObject) {
+
+        initialize : function(javaObject) {
             alert("JS INIT");
             this.javaObject = javaObject;
             alert("initing permissions");
             javaObject.initPermissions(window);
             alert("Permissions inited");
-            var instances = window.JWMScript.instances || {};
-            var id = this.javaObject.getParameter("object_id");
-            alert("initing javascript object "+id);
-            // instances[id].initialize(this);
-        }),
+            return self.register(this.types, this.setup);
+        },
 
         register : util.exception_handle(function(types, callback) {
             var scripting = new JWMScript.Scripting();
@@ -182,8 +179,12 @@
         }
     });
 
-    return function() {
-        return new JWMScript();
+    return function(javaObject) {
+        var instances = JWMScript.instances || {};
+        var id = javaObject.getParameter("object_id");
+        alert("initing javascript object "+id);
+        var obj = instances[id];
+        return obj.initialize(javaObject);
     };
 
 })();

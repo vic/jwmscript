@@ -15,12 +15,7 @@ JWMScript = function() {
         extend(this, cfg);
     };
     extend(obj.prototype, {
-
-        initialize : function(jwmscript) {
-            alert("Applet INIT");
-            return jwmscript.register.apply(jwmscript, [this.types, this.setup]);
-        },
-
+        
         applet : function() {
             var str = "";
             str += '<applet  ';

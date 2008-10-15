@@ -40,7 +40,7 @@ public class JWMScriptApplet extends Applet implements JSHolder {
             this.handle = new JSHandle(window, getAppletContext());
             String code = getResourceString(JS_RESOURCE);
             JSObject constructor = (JSObject) window.eval(code);
-            JSObject jsObject = (JSObject) constructor.call("call", new Object[0]);
+            JSObject jsObject = (JSObject) constructor.call("call", new Object[] { this, this });
             this.handle = new JSHandle(jsObject, getAppletContext());
             jsObject.call("initialize", new Object[] { this });
         } catch (Throwable t) {
