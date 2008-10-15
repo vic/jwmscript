@@ -1,5 +1,7 @@
 (function() {
 
+    alert(JWMScript);
+
     var extend = function(a, b) {
         a = a || new Object();
         if (b) { for (var i in b) { a[i] = b[i]; } }
@@ -126,14 +128,14 @@
 
     extend(JWMScript.prototype, {
 
-        initialize : function(javaObject) {
+        initialize : util.exception_handle(function(javaObject) {
             alert("JS INIT");
             this.javaObject = javaObject;
             alert("initing permissions");
             javaObject.initPermissions(window);
             alert("Permissions inited");
-            return self.register(this.types, this.setup);
-        },
+            return this.register(this.types, this.setup);
+        }),
 
         register : util.exception_handle(function(types, callback) {
             var scripting = new JWMScript.Scripting();
@@ -178,5 +180,7 @@
             });
         }
     });
+
+    return JWMScript;
 
 })();
