@@ -22,7 +22,7 @@ JWMScript = function() {
 
         getInstance : function(id) {
             this.instances = this.instances || {};
-            return instances[id];
+            return this.instances[id];
         }
     });
 
