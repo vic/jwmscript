@@ -6,7 +6,10 @@
         return a;
     };
 
-    var util = {
+    JWMScript.Util = function() {};
+    var util = new JWMScript.Util();
+
+    extend(JWMScript.Util.prototype, {
         extend : extend,
 
         Y : function (le) {
@@ -63,6 +66,7 @@
                     } else {
                         alert(this.backtrace(e));
                     }
+                    throw e;
                 }
             };
         },
@@ -73,16 +77,17 @@
 
         wrapClass : function(name, classLoader) {
             var wrapper = this.javaObject.wrapClass(name, classLoader || null);
+            var self = this;
             return {
                 newInstance : function() {
-                    return wrapper.newInstance(this.toJavaArray(arguments));
+                    return wrapper.newInstance(self.toJavaArray(arguments));
                 },
                 field : function(fieldName) {
                     return wrapper.getStaticField(fieldName);
                 },
                 method : function(methodName) {
                     return function() {
-                        return wrapper.callStaticMethod(methodName, this.toJavaArray(arguments));
+                        return wrapper.callStaticMethod(methodName, self.toJavaArray(arguments));
                     };
                 },
                 on : function(object) {
@@ -92,7 +97,7 @@
                         },
                         method : function(methodName) {
                             return function() {
-                                return wrapper.callInstanceMethod(object, methodName, this.toJavaArray(arguments));
+                                return wrapper.callInstanceMethod(object, methodName, self.toJavaArray(arguments));
                             };
                         }
                     };
@@ -102,22 +107,33 @@
         },
 
         handle : function(obj) {
-            var ctx = this.javaObject.getJSHandle().getAppletContext();
-            return this.wrapClass("com.jwmsolutions.jwmscript.JSHandle").newInstance(obj, ctx);
+            return this.javaObject.newHandle(obj);
         },
 
         toURLArray : function(a) {
-          return this.javaObject.toURLArray(this.handle(a));
+            alert("HAndle for array "+a.length);
+            var handle = this.handle(a);
+            alert("handle: "+handle);
+            try {
+            return this.javaObject.toURLArray(handle);
+            }catch(e) {
+                alert(e);
+            }
+
         },
 
         toJavaArray : function(a, type) {
-          return this.javaObject.toJavaArray(this.handle(a), type || null);
+            return this.javaObject.toJavaArray(this.handle(a), type || null);
+        },
+
+        setJavaObject : function(javaObject) {
+            this.javaObject = javaObject;
         }
-    };
+    });
 
     extend(JWMScript, {
         setUtil : function(javaObject) {
-            util.javaObject = javaObject;
+            util.setJavaObject(javaObject);
         }
     });
 
@@ -150,10 +166,12 @@
 
     JWMScript.Scripting = function(obj) { extend(this, obj); };
     extend(JWMScript.Scripting.prototype, {
-        addClassPath : function() {
+        addClassPath : util.exception_handle(function() {
+            alert("Adding to Classpath: "+arguments);
             var urls = util.toURLArray(arguments);
+            alert("Got urls "+urls);
             this.javaObject.addClassPath(urls);
-        },
+        }),
         wrapClass : function(name) {
             return util.wrapClass(name, this.javaObject.getClassLoader());
         },

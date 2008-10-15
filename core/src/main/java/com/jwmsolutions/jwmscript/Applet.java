@@ -38,7 +38,7 @@ public class Applet extends java.applet.Applet {
         URL url = getClass().getProtectionDomain().getCodeSource().getLocation();
         URLSetPolicy policy = new URLSetPolicy();
         java.security.Policy.setPolicy(policy);
-        policy.addPermission(new java.security.AllPermission());       
+        policy.addPermission(new java.security.AllPermission());
         policy.addURL(url, getCodeBase(), getDocumentBase());
     }
     

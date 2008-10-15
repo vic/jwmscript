@@ -63,19 +63,32 @@ public class Util implements JSHolder {
     }
 
     public URL[] toURLArray(JSHandle jsAry) throws java.net.MalformedURLException {
-        int length = Integer.parseInt(jsAry.getMember("length").toString());
+        try {
+        int length = ((Number) jsAry.getMember("length")).intValue();
         URL[] ary = new URL[length];
         for (int i = 0; i < length; i++) {
             Object obj = jsAry.getSlot(i);
             if (obj == null) { continue; }
-            ary[i] = new URL(obj.toString());
+            String spec = obj.toString();
+            if (!spec.matches("^\\w+:.+")) {
+                String location = (String) handle.eval("document.location.toString()");
+                spec = location.replaceFirst("/[^/]*$", "/"+spec);
+            }
+            handle.alert("Doing "+i+" "+spec);
+            ary[i] = new URL(spec);
         }
+        handle.alert("Done with url ary "+length);
         return ary;
+        }catch(Throwable e) {
+            handle.alert(getBacktrace(e));
+            throw new RuntimeException(e);
+        }
     }
 
-    public Object[] toObjectArray(JSHandle jsAry, Class javaClass) {
+    public Object[] toJavaArray(JSHandle jsAry, Class javaClass) {
+        int length = ((Number) jsAry.getMember("length")).intValue();
         if (javaClass == null) { javaClass = Object.class; }
-        int length = Integer.parseInt(jsAry.getMember("length").toString());
+        handle.alert(" TO JAVA "+javaClass+"["+length+"] "+jsAry+" ");
         Object[] ary = new Object[length];
         for (int i = 0; i < length; i ++) {
             Object obj = jsAry.getSlot(i);
@@ -85,6 +98,10 @@ public class Util implements JSHolder {
             ary[i] = obj;
         }
         return ary;
+    }
+
+    public JSHandle newHandle(JSObject jsObject) {
+        return new JSHandle(jsObject, getJSHandle().getAppletContext());
     }
     
 }
