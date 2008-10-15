@@ -111,11 +111,28 @@
         },
 
         toURLArray : function(a) {
-            return this.javaObject.toURLAry(this.handle(a));
+          var urlArray = java.lang.reflect.Array.newInstance(java.net.URL, a.length);
+          for (var i = 0; i < a.length; i++) {
+              var url = a[i];
+              if (typeof url == "string") {
+                  if (!url.match(/^\w+:/)){
+                      url = document.location.toString().replace(/\/[^/]*$/, "/"+url);
+                  }
+                  alert(url);
+                  url = new java.net.URL(url);
+              }
+              java.lang.reflect.Array.set(urlArray, i, url);
+          }
+          return urlArray;
         },
 
         toJavaArray : function(a, type) {
-            return this.javaObject.toJavaAry(this.handle(a), type || null);
+          type = type || java.lang.Object;
+          var array = java.lang.reflect.Array.newInstance(type, a.length);
+          for (var i = 0; i < a.length; i++) {
+              java.lang.reflect.Array.set(array, i, a[i]);
+          }
+          return array;
         },
 
         setJavaObject : function(javaObject) {
@@ -162,7 +179,12 @@
             alert("Adding to Classpath: "+arguments);
             var urls = util.toURLArray(arguments);
             alert("Got urls "+urls);
+            try {
             this.javaObject.addClassPath(urls);
+            }catch(e) {
+                alert(util.getBacktrace(e));
+            }
+
         }),
         wrapClass : function(name) {
             return util.wrapClass(name, this.javaObject.getClassLoader());

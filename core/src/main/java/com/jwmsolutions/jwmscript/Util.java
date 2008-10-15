@@ -76,7 +76,7 @@ public class Util implements JSHolder {
                 spec = location.replaceFirst("/[^/]*$", "/"+spec);
             }
             handle.alert("Doing "+i+" "+spec);
-            Array.set(ary, i, spec);
+            Array.set(ary, i, new URL(spec));
         }
         handle.alert("Done with url ary "+length);
         return ary;
