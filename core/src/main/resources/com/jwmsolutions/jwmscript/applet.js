@@ -7,15 +7,27 @@ JWMScript = function() {
     };
 
     var obj = function(cfg) {
-        JWMScript.instances = JWMScript.instances || {};
-        JWMScript.counter = JWMScript.counter || 0;
-        JWMScript.counter += 1;
-        this.id = "JWMScript"+JWMScript.counter;
-        JWMScript.instances[this.id] = this;
-        extend(this, cfg);
+        JWMScript.addInstance(extend(this, cfg));
     };
+
+    extend(obj, {
+        addInstance : function(obj) {
+            this.counter = this.counter || 0;
+            this.counter += 1;
+            obj.id = "JWMScript"+this.counter;
+            this.instances = this.instances || {};
+            this.instances[obj.id] = obj;
+            return obj;
+        },
+
+        getInstance : function(id) {
+            this.instances = this.instances || {};
+            return instances[id];
+        }
+    });
+
     extend(obj.prototype, {
-        
+
         applet : function() {
             var str = "";
             str += '<applet  ';

@@ -179,12 +179,4 @@
         }
     });
 
-    return function(javaObject) {
-        var instances = JWMScript.instances || {};
-        var id = javaObject.getParameter("object_id");
-        alert("initing javascript object "+id);
-        var obj = instances[id];
-        return obj.initialize(javaObject);
-    };
-
 })();
