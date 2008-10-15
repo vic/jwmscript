@@ -1,7 +1,5 @@
 (function() {
 
-    alert(JWMScript);
-
     var extend = function(a, b) {
         a = a || new Object();
         if (b) { for (var i in b) { a[i] = b[i]; } }
@@ -134,10 +132,13 @@
         }),
 
         register : util.exception_handle(function(types, callback) {
+            alert("Registering");
             var scripting = new JWMScript.Scripting();
             var ctx = this.javaObject.getAppletContext();
             var handle = util.wrapClass("com.jwmsolutions.jwmscript.JSHandle").newInstance(scripting, ctx);
+            alert("Creating scripting object");
             scripting.javaObject = util.wrapClass("com.jwmsolutions.jwmscript.Scripting").newInstance(handle);
+            alert("Created !! scripting object");
             var eval = callback(scripting);
             var evaluator;
             if (typeof(eval) == 'function') {
