@@ -43,7 +43,7 @@
             var scripts = el.getElementsByTagName("script");
             for (var i = 0; i < scripts.length; i++) {
                 var script = scripts[i];
-                if (util.ary_include(types, script.getAttribute("type"))){
+                if (this.ary_include(types, script.getAttribute("type"))){
                     cb(script);
                 }
             }
@@ -59,30 +59,30 @@
                     callback.apply(scope || this, arguments);
                 } catch (e) {
                     if (window.console) {
-                        window.console.error(util.backtrace(e));
+                        window.console.error(this.backtrace(e));
                     } else {
-                        alert(util.backtrace(e));
+                        alert(this.backtrace(e));
                     }
                 }
             };
         },
 
         backtrace : function(e) {
-            return this.root.javaObject.getBacktrace(e);
+            return this.javaObject.getBacktrace(e);
         },
 
         wrapClass : function(name, classLoader) {
-            var wrapper = this.root.javaObject.wrapClass(name, classLoader || null);
+            var wrapper = this.javaObject.wrapClass(name, classLoader || null);
             return {
                 newInstance : function() {
-                    return wrapper.newInstance(util.toJavaArray(arguments));
+                    return wrapper.newInstance(this.toJavaArray(arguments));
                 },
                 field : function(fieldName) {
                     return wrapper.getStaticField(fieldName);
                 },
                 method : function(methodName) {
                     return function() {
-                        return wrapper.callStaticMethod(methodName, util.toJavaArray(arguments));
+                        return wrapper.callStaticMethod(methodName, this.toJavaArray(arguments));
                     };
                 },
                 on : function(object) {
@@ -92,7 +92,7 @@
                         },
                         method : function(methodName) {
                             return function() {
-                                return wrapper.callInstanceMethod(object, methodName, util.toJavaArray(arguments));
+                                return wrapper.callInstanceMethod(object, methodName, this.toJavaArray(arguments));
                             };
                         }
                     };
@@ -101,51 +101,35 @@
             };
         },
 
+        handle : function(obj) {
+            var ctx = this.javaObject.getJSHandle().getAppletContext();
+            return this.wrapClass("com.jwmsolutions.jwmscript.JSHandle").newInstance(obj, ctx);
+        },
+
         toURLArray : function(a) {
-          var urlArray = java.lang.reflect.Array.newInstance(java.net.URL, a.length);
-          for (var i = 0; i < a.length; i++) {
-              var url = a[i];
-              if (typeof(url) == "string") {
-                  if (!url.match(/^\w+:/)) { url = util.relative(url); }
-                  url = new java.net.URL(url);
-              }
-              java.lang.reflect.Array.set(urlArray, i, url);
-          }
-          return urlArray;
+          return this.javaObject.toURLArray(this.handle(a));
         },
 
         toJavaArray : function(a, type) {
-          type = type || java.lang.Object;
-          var array = java.lang.reflect.Array.newInstance(type, a.length);
-          for (var i = 0; i < a.length; i++) {
-              java.lang.reflect.Array.set(array, i, a[i]);
-          }
-          return array;
+          return this.javaObject.toJavaArray(this.handle(a), type || null);
         }
     };
+
+    extend(JWMScript, {
+        setUtil : function(javaObject) {
+            util.javaObject = javaObject;
+        }
+    });
 
     extend(JWMScript.prototype, {
 
         initialize : util.exception_handle(function(javaObject) {
-            if (!util.root) { util.root = this; } // FIXME
             this.javaObject = javaObject;
             return this.register(this.types, this.setup);
         }),
 
         register : util.exception_handle(function(types, callback) {
-            alert("Registering");
-            var scripting = new JWMScript.Scripting();
-            var ctx = this.javaObject.getAppletContext();
-            alert("CTX IS: "+ctx);
-            var handle;
-            try {
-              handle = util.wrapClass("com.jwmsolutions.jwmscript.JSHandle").newInstance(scripting, ctx);
-            }catch(e) {
-              alert(e);
-            }
-            alert("Creating scripting object on "+handle);
-            scripting.javaObject = util.wrapClass("com.jwmsolutions.jwmscript.Scripting").newInstance(handle);
-            alert("Created !! scripting object");
+            var scripting = new JWMScript.Scripting({ javaObject : this.javaObject });
             var eval = callback(scripting);
             var evaluator;
             if (typeof(eval) == 'function') {
@@ -167,9 +151,8 @@
     JWMScript.Scripting = function(obj) { extend(this, obj); };
     extend(JWMScript.Scripting.prototype, {
         addClassPath : function() {
-            urls = util.toURLArray(arguments);
-            java.security.Policy.getPolicy().addURL(urls);
-            this.javaObject.getClassLoader().addURL(urls);
+            var urls = util.toURLArray(arguments);
+            this.javaObject.addClassPath(urls);
         },
         wrapClass : function(name) {
             return util.wrapClass(name, this.javaObject.getClassLoader());

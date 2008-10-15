@@ -33,7 +33,7 @@ JWMScript = function() {
             str += '<applet  ';
             if (this.codebase) { str += ' codebase="'+this.codebase+'" '; }
             str += ' archive="'+this.archive+'" ';
-            str += ' code="com.jwmsolutions.jwmscript.JWMScriptApplet" ';
+            str += ' code="com.jwmsolutions.jwmscript.Applet" ';
             str += ' width="0" height="0" mayscript="mayscript" scriptable="true" ';
             str += ' > ';
             str += '     <param name="object_id"  value="'+this.id+'"> ';
@@ -49,7 +49,7 @@ JWMScript = function() {
             var str = "";
             var nav = navigator.appName;
             if (nav.match(/Netscape/)) {
-                str += ('<embed id = "'+this.id+'" code="com.jwmsolutions.jwmscript.JWMScriptApplet" ');
+                str += ('<embed id = "'+this.id+'" code="com.jwmsolutions.jwmscript.Applet" ');
                 str += (' archive="'+this.archive+'"');
                 str += (' width="0" height="0" ');
                 str += (' mayscript="true" ');
@@ -60,7 +60,7 @@ JWMScript = function() {
                 str += ('<object id = "'+this.id+'" classid="clsid:CAFEEFAC-0016-0000-0000-ABCDEFFEDCBA" ');
                 str += (' width="10" height="10"');
                 str += (' codebase="http://java.sun.com/products/plugin/autodl/jinstall-1_5_0-windows-i586.cab#Version=1,5,0,0">');
-                str += (' <param name="code" value="com.jwmsolutions.jwmscript.JWMScriptApplet" />');
+                str += (' <param name="code" value="com.jwmsolutions.jwmscript.Applet" />');
                 str += (' <param name="codebase" value="'+this.archive+'" />');
                 str += (' <param name="mayscript" value="true" />');
                 str += (' <param name="scriptable" value="true" />');
