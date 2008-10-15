@@ -129,11 +129,7 @@
     extend(JWMScript.prototype, {
 
         initialize : util.exception_handle(function(javaObject) {
-            alert("JS INIT");
             this.javaObject = javaObject;
-            alert("initing permissions");
-            javaObject.initPermissions(window);
-            alert("Permissions inited");
             return this.register(this.types, this.setup);
         }),
 
